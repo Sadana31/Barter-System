@@ -9,111 +9,130 @@ import {
   TouchableOpacity,
   FlatList,
   Alert} from 'react-native';
-import {Card,ListItem,Icon} from 'react-native-elements';
+import {Card,Listitem,Icon} from 'react-native-elements';
 import MyHeader from '../components/MyHeader';
 import db from '../config';
 import firebase from 'firebase';
 
 export default class MyBarters extends React.Component {
-    static navigationOptions = {header: null}
-
-    constructor(){
-        super();
-        this.state = {
-            donorID: firebase.auth().currentUser.email,
-            allBarters: [],
-            donorName: "",
-        }
-        this.requestRef = null;
+  constructor(){
+    super()
+    this.state = {
+      donorId : firebase.auth().currentUser.email,
+      donorName : "",
+      allDonations : []
     }
-
-    getAllBarters=()=>{
-        this.requestRef = db.collection("allBarters")
-        .where("donorID","==",this.state.donorID)
-        .onSnapshot((snapshot)=>{
-            var barters = snapshot.docs.map(document=>document.data());
-            this.setState({allBarters: barters});
-        })
-    }
-
-    getDonorDetails=(donorID)=>{
-      db.collection("users").where("emailID","==", donorID).get()
-      .then((snapshot)=>{
-        snapshot.forEach((doc) => {
-          this.setState({
-            donorName : doc.data().firstName + " " + doc.data().lastName
-          })
-        });
-      })
+    this.requestRef= null
   }
 
-    componentDidMount(){
-        this.getAllBarters();
-        this.getDonorDetails(this.state.donorName)
-    }
+  static navigationOptions = { header: null };
 
-    sendNotification=(itemDetails, requestStatus)=>{
-      var requestID = itemDetails.requestID;
-      var donorID = itemDetails.donorID;
-      db.collection("allNotifications")
-      .where("requestID","==",requestID)
-      .where("donorID","==",donorID).get()
-      .then((snapshot)=>{
-          snapshot.forEach((doc)=>{
-              var message = "";
-              if(requestStatus === "item Sent"){
-                  message = this.state.donorName + "sent you the item";
-              }
-              else {
-                  message = this.state.donorName + "has shown interest in donating the item";
-              }
+  getDonorDetails=(donorId)=>{
+    db.collection("users").where("emailID","==", donorId).get()
+    .then((snapshot)=>{
+      snapshot.forEach((doc) => {
+        this.setState({
+          "donorName" : doc.data().firstName + " " + doc.data().lastName
+        })
+      });
+    })
+  }
 
-              db.collection("allNotifications").doc(doc.id).update({
-                  "message": message,
-                  "notificationStatus": "unread",
-                  "date": firebase.firestore.FieldValue.serverTimestamp(),
-              })
-          })
-      })
+  getAllDonations =()=>{
+    this.requestRef = db.collection("allNotifications").where("donorID" ,'==', this.state.donorId)
+    .onSnapshot((snapshot)=>{
+      var allDonations = []
+      snapshot.docs.map((doc) =>{
+        var donation = doc.data()
+        donation["docID"] = doc.id
+        allDonations.push(donation)
+      });
+      this.setState({
+        allBarters : allDonations
+      });
+    })
   }
 
   senditem=(itemDetails)=>{
-    if(itemDetails.requestStatus === "Donor Interested"){
-        var requestStatus = "item Sent";
-        db.collection("allDonations").doc(itemDetails.docID)
-        .update({
-            "requestStatus": "item Sent"
-        })
-        this.sendNotification(itemDetails,requestStatus);
+    if(itemDetails.requestStatus === "item Sent"){
+      var requestStatus = "Donor Interested"
+      db.collection("allBarters").doc(itemDetails.docID).update({
+        "requestStatus" : "Donor Interested"
+      })
+      this.sendNotification(itemDetails,requestStatus)
+    }
+    else{
+      var requestStatus = "item Sent"
+      db.collection("allBarters").doc(itemDetails.docID).update({
+        "requestStatus" : "item Sent"
+      })
+      this.sendNotification(itemDetails,requestStatus)
     }
   }
 
-    keyExtractor =(item,index)=> index.toString();
+  sendNotification=(itemDetails,requestStatus)=>{
+    var requestId = itemDetails.requestID
+    var donorId = itemDetails.donorID
+    db.collection("allNotifications")
+    .where("requestID","==", requestId)
+    .where("donorID","==",donorId)
+    .get()
+    .then((snapshot)=>{
+      snapshot.forEach((doc) => {
+        var message = ""
+        if(requestStatus === "item Sent"){
+          message = this.state.donorName + " sent you item"
+        }else{
+           message =  this.state.donorName  + " has shown interest in donating the item"
+        }
+        db.collection("allNotifications").doc(doc.id).update({
+          "message": message,
+          "notificationStatus" : "unread",
+          "date"                : firebase.firestore.FieldValue.serverTimestamp()
+        })
+      });
+    })
+  }
 
-    renderItem=({item,i})=>(
-        <ListItem 
-        key={i}
-        title={item.itemName}
-        subtitle = {"Requested by: " + item.requestedBy + "\nStatus:" + item.requestStatus}
-        leftElement={<Icon icon name="list" color="#696969"
-        titleStyle={{color: "black", fontWeight: "bold"}}/>}
-        rightElement={
-        <TouchableOpacity 
-        style={[styles.button, 
-                {backgroundColor: item.requestStatus==="item Sent" ? "green" : "#ff5722"}]}
-        onPress={()=>{
-          this.senditem(item);
-        }}>
-            <Text style={{color: "white"}}>
-                {item.requestStatus === "Donor Interested" ? "Send Item" : "Item Sent"}
-            </Text>
-        </TouchableOpacity>}
-        bottomDivider />
-    )
+  keyExtractor = (item, index) => index.toString()
 
-    componentWillUnmount(){
-        this.requestRef();
-    }
+  renderItem = ( {item, i} ) =>(
+    <Listitem
+      key={i}
+      title={item.itemName}
+      subtitle={"Requested By : " + item.receiverName +"\nStatus : " + item.notificationStatus}
+      leftElement={<Icon name="item" type="font-awesome" color ='#696969'/>}
+      titleStyle={{ color: 'black', fontWeight: 'bold' }}
+      rightElement={
+          <TouchableOpacity
+           style={[
+             styles.button,
+             {
+               backgroundColor : item.notificationStatus === "unread" ? "green" : "#ff5722"
+             }
+           ]}
+           onPress = {()=>{
+             this.senditem(item)
+           }}
+          >
+            <Text style={{color:'#ffff'}}>{
+              item.notificationStatus === "unread" ? "item Sent" : "Send item"
+            }</Text>
+          </TouchableOpacity>
+        }
+      bottomDivider
+    />
+  )
+
+
+  componentDidMount(){
+    this.getDonorDetails(this.state.donorId)
+    this.getAllDonations()
+  }
+
+  componentWillUnmount(){
+    this.requestRef();
+  }
 
     render(){
         return(
@@ -121,7 +140,7 @@ export default class MyBarters extends React.Component {
             <MyHeader navigation={this.props.navigation} title="My Barters"/>
             <View style={{flex:1}}>
               {
-                this.state.allBarters.length === 0
+                this.state.allDonations.length === 0
                 ?(
                   <View style={styles.subtitle}>
                     <Text style={{ fontSize: 20}}>List of all Barters</Text>
@@ -130,7 +149,7 @@ export default class MyBarters extends React.Component {
                 :(
                   <FlatList
                     keyExtractor={this.keyExtractor}
-                    data={this.state.allBarters}
+                    data={this.state.allDonations}
                     renderItem={this.renderItem}
                   />
                 )

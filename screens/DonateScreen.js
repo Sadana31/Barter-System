@@ -64,7 +64,7 @@ export default class DonateScreen extends Component{
             this.state.requestedItemsList.length === 0
             ?(
               <View style={styles.subContainer}>
-                <Text style={{ fontSize: 20}}>List Of All Requested Items</Text>
+                <Text style={{ fontSize: 20}}>There are currently no requests!!</Text>
               </View>
             )
             :(
