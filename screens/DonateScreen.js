@@ -58,7 +58,7 @@ export default class DonateScreen extends Component{
   render(){
     return(
       <View style={{flex:1}}>
-        <MyHeader title="DONATE AN ITEM"/>
+        <MyHeader title="DONATE AN ITEM" navigation={this.props.navigation}/>
         <View style={{flex:1, backgroundColor: "lightblue"}}>
           {
             this.state.requestedItemsList.length === 0

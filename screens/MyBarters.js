@@ -14,7 +14,7 @@ import MyHeader from '../components/MyHeader';
 import db from '../config';
 import firebase from 'firebase';
 
-export default class MyBarters extends React.Component {
+export default class MyBarters extends Component {
   constructor(){
     super()
     this.state = {
@@ -29,7 +29,7 @@ export default class MyBarters extends React.Component {
 
   getDonorDetails=(donorId)=>{
     db.collection("users").where("emailID","==", donorId).get()
-    .then((snapshot)=>{
+    .onSnapshot((snapshot)=>{
       snapshot.forEach((doc) => {
         this.setState({
           "donorName" : doc.data().firstName + " " + doc.data().lastName

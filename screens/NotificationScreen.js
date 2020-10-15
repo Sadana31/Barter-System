@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, FlatList,Text } from 'react-native';
-import { Listitem, Icon } from 'react-native-elements';
+import { ListItem, Icon } from 'react-native-elements';
 import firebase from 'firebase';
 import MyHeader from '../components/MyHeader';
-
+import SwipeableFlatList from '../components/SwipeableFlatList';
 import db from '../config';
 
 export default class NotificationScreen extends Component{
@@ -17,7 +17,7 @@ export default class NotificationScreen extends Component{
 
     this.notificationRef = null
   }
-
+s
   getNotifications=()=>{
     this.requestRef = db.collection("allNotifications")
     .where("notificationStatus", "==", "unread")
@@ -47,9 +47,9 @@ export default class NotificationScreen extends Component{
 
   renderitem = ({item,index}) =>{
       return (
-        <Listitem
+        <ListItem
           key={index}
-          leftElement={<Icon name="item" type="font-awesome" color ='#696969'/>}
+          leftElement={<Icon name="gift" type="font-awesome" color ='#696969'/>}
           title={item.itemName}
           titleStyle={{ color: 'black', fontWeight: 'bold' }}
           subtitle={item.message}
@@ -62,7 +62,7 @@ export default class NotificationScreen extends Component{
     return(
       <View style={styles.container}>
         <View style={{flex:0.1}}>
-          <MyHeader title={"NOTIFICATIONS"} navigation={this.props.navigation}/>
+          <MyHeader title={"NOTIFICATIONS"} />
         </View>
         <View style={{flex:0.9}}>
           {
@@ -72,13 +72,7 @@ export default class NotificationScreen extends Component{
                 <Text style={{fontSize:25}}>You have no notifications</Text>
               </View>
             )
-            :(
-              <FlatList
-                keyExtractor={this.keyExtractor}
-                data={this.state.allNotifications}
-                renderItem={this.renderitem}
-              />
-            )
+            :(<SwipeableFlatList allNotifications={this.state.allNotifications}/>)
           }
         </View>
       </View>

@@ -10,7 +10,7 @@
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
     "expo": "^36.0.0",
-    "firebase": "^7.21.0",
+    "firebase": "^7.23.0",
     "lottie-react-native": "~2.6.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
@@ -21,6 +21,7 @@
     "react-native-reanimated": "^1.4.0",
     "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "2.0.0-alpha.12",
+    "react-native-swipe-list-view": "^3.2.4",
     "react-native-web": "^0.11.7",
     "react-navigation": "^4.4.0",
     "react-navigation-drawer": "^2.5.0",

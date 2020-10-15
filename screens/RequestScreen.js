@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, {Component} from 'react';
 import {Text, View, StyleSheet, TextInput, 
 TouchableOpacity,KeyboardAvoidingView, Alert} from 'react-native';
 import db from '../config';
 import MyHeader from '../components/MyHeader';
 import firebase from 'firebase';
 
-export default class RequestScreen extends React.Component {
+export default class RequestScreen extends Component {
 
     constructor(){
         super();
@@ -52,7 +52,7 @@ export default class RequestScreen extends React.Component {
     render(){
         return (
             <View style={{flex: 1}}>
-                <MyHeader title="REQUEST  AN  ITEM" />
+                <MyHeader title="REQUEST  AN  ITEM"  navigation={this.props.navigation}/>
 
                 <KeyboardAvoidingView behavior="margin" enabled style={styles.keyBoardStyle}>
                     <TextInput style={styles.inputBox}

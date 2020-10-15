@@ -11,7 +11,7 @@ import db from '../config';
 import firebase from 'firebase';
 import MyHeader from '../components/MyHeader'
 
-export default class SettingsScreen extends React.Component {
+export default class SettingsScreen extends Component {
     constructor(){
       super();
       this.state={
@@ -62,7 +62,7 @@ export default class SettingsScreen extends React.Component {
     render(){
       return(
         <View style={styles.container} >
-          <MyHeader title="SETTINGS"/>
+          <MyHeader title="SETTINGS"  navigation={this.props.navigation}/>
           <KeyboardAvoidingView behavior="margin" enabled style={styles.formContainer}>
               <Text style={styles.header}>
                   FIRST NAME ENTER

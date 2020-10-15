@@ -4,7 +4,7 @@ import {DrawerItems} from 'react-navigation-drawer';
 import firebase from 'firebase';
 import { render } from 'react-dom';
 
-export default class CustomSideBarMenu extends React.Component{
+export default class CustomSideBarMenu extends Component{
     render(){
         return(
             <View style = {styles.container}>

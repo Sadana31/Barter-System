@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import {AppStackNavigator} from '../components/AppStackNavigator';
 import RequestScreen from '../screens/RequestScreen';

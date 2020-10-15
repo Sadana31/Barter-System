@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, {Component} from 'react';
 import {Text, View, StyleSheet, TextInput, 
 TouchableOpacity,KeyboardAvoidingView, Alert} from 'react-native';
 import db from '../config';
 import {Header,Icon,Card} from 'react-native-elements';
 import firebase from 'firebase';
 
-export default class ReceiverDetailsScreen extends React.Component {
+export default class ReceiverDetailsScreen extends Component {
     constructor(props){
         super(props);
         this.state = {

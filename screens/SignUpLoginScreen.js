@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {Component} from 'react';
 import {Text,View, TextInput, TouchableOpacity, StyleSheet, 
   Alert, KeyboardAvoidingView, Image,
 ScrollView, Modal} from 'react-native';
@@ -6,7 +6,7 @@ import db from '../config';
 import firebase from 'firebase';
 import {Header} from 'react-native-elements';
 
-export default class SignUpLoginScreen extends React.Component {
+export default class SignUpLoginScreen extends Component {
     constructor(){
         super();
         this.state = {
@@ -210,6 +210,7 @@ export default class SignUpLoginScreen extends React.Component {
                         text: 'BARTER SYSTEM',
                         style: { color: '#fff', fontSize: 25, fontWeight: "bold"},
                     }}
+                    navigation={this.props.navigation}
                 />
 
                 <Text style={styles.info1}>Welcome to    </Text>

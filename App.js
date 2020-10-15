@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import { createAppContainer, createSwitchNavigator,} from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import {AppDrawerNavigator} from './components/AppDrawerNavigator';
