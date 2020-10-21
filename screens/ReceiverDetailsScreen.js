@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, TextInput, 
+import {Text, View, StyleSheet, Input, 
 TouchableOpacity,KeyboardAvoidingView, Alert} from 'react-native';
 import db from '../config';
 import {Header,Icon,Card} from 'react-native-elements';
 import firebase from 'firebase';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export default class ReceiverDetailsScreen extends Component {
     constructor(props){
@@ -53,7 +54,7 @@ export default class ReceiverDetailsScreen extends Component {
             requestID: this.state.requestID,
             requestedBy: this.state.receiverName,
             donorID: this.state.receiverId,
-            requestStatus: "Donor Interested"
+            isRequestStatusActive: "Donor Interested"
         })
     }
 
@@ -81,17 +82,17 @@ export default class ReceiverDetailsScreen extends Component {
                                     color="#696969" 
                                     onPress={()=>this.props.navigation.goBack()}/>}
                     centerComponent={{text: "DONATE ITEMS",
-                                    style: {color: "white", fontSize: 20, fontWeight: "bold"}}}
+                                    style: {color: "white", fontSize: RFValue(20), fontWeight: "bold"}}}
                     backgroundColor = "darkblue"/>
                 </View>
 
                 <View style={{flex: 0.8, 
-                                marginTop: 80, 
+                                marginTop: RFValue(80), 
                                 backgroundColor: "lightblue", 
                                 borderWidth: 3,
                                 margin: 10,
                                 borderRadius: 10}}>
-                    <Text style={{fontWeight: "bold", fontSize: 18, textAlign: "center"}}>
+                    <Text style={{fontWeight: "bold", fontSize: RFValue(18), textAlign: "center"}}>
                         ITEM DESCRIPTION
                     </Text>
                     <Card>
@@ -105,7 +106,7 @@ export default class ReceiverDetailsScreen extends Component {
                 <View 
                 style={styles.box}>
                     <Text 
-                    style={{fontWeight: "bold", fontSize: 18, textAlign: "center"}}>
+                    style={{fontWeight: "bold", fontSize: RFValue(18), textAlign: "center"}}>
                         RECEIVER INFORMATION
                     </Text>
                     <Card>
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
     button:{
       width:200,
       height:50,
-      marginTop: 5,
+      marginTop: RFValue(5),
       justifyContent:'center',
       alignItems : 'center',
       borderRadius: 15,
@@ -163,9 +164,10 @@ const styles = StyleSheet.create({
     },
     box: {
         flex: 1, 
-        marginTop: 40, 
+        marginTop: RFValue(40), 
         backgroundColor: "lightblue", 
         borderWidth: 3,
         margin: 10,
-        borderRadius: 10}
+        borderRadius: 10
+    }
   })

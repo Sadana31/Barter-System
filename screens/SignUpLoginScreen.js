@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Text,View, TextInput, TouchableOpacity, StyleSheet, 
+import {Text,View, TouchableOpacity, StyleSheet, 
   Alert, KeyboardAvoidingView, Image,
 ScrollView, Modal} from 'react-native';
 import db from '../config';
 import firebase from 'firebase';
-import {Header} from 'react-native-elements';
+import {Header, Input} from 'react-native-elements';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export default class SignUpLoginScreen extends Component {
     constructor(){
@@ -58,6 +59,7 @@ export default class SignUpLoginScreen extends Component {
                     contact: this.state.contact,
                     address: this.state.address,
                     emailID: this.state.emailID,
+                    isRequestStatusActive: false
                 })
 
                 return  Alert.alert(
@@ -87,8 +89,8 @@ export default class SignUpLoginScreen extends Component {
                 <ScrollView style={{width:'100%'}}>
                   <KeyboardAvoidingView style={styles.KeyboardAvoidingView}>
                   <Text style={styles.modalTitle}>Register here!!   </Text>
-                  <TextInput
-                    style={styles.formTextInput}
+                  <Input
+                    containerStyle={styles.formInput}
                     placeholder ={"First Name"}
                     maxLength ={8}
                     onChangeText={(text)=>{
@@ -97,8 +99,8 @@ export default class SignUpLoginScreen extends Component {
                       })
                     }}
                   />
-                  <TextInput
-                    style={styles.formTextInput}
+                  <Input
+                    containerStyle={styles.formInput}
                     placeholder ={"Last Name"}
                     maxLength ={8}
                     onChangeText={(text)=>{
@@ -107,8 +109,8 @@ export default class SignUpLoginScreen extends Component {
                       })
                     }}
                   />
-                  <TextInput
-                    style={styles.formTextInput}
+                  <Input
+                    containerStyle={styles.formInput}
                     placeholder ={"Contact"}
                     maxLength ={10}
                     keyboardType={'numeric'}
@@ -118,8 +120,8 @@ export default class SignUpLoginScreen extends Component {
                       })
                     }}
                   />
-                  <TextInput
-                    style={styles.formTextInput}
+                  <Input
+                    containerStyle={styles.formInput}
                     placeholder ={"Address"}
                     multiline = {true}
                     onChangeText={(text)=>{
@@ -128,8 +130,8 @@ export default class SignUpLoginScreen extends Component {
                       })
                     }}
                   />
-                  <TextInput
-                    style={styles.formTextInput}
+                  <Input
+                    containerStyle={styles.formInput}
                     placeholder ={"Email"}
                     keyboardType ={'email-address'}
                     onChangeText={(text)=>{
@@ -137,8 +139,9 @@ export default class SignUpLoginScreen extends Component {
                         emailID: text
                       })
                     }}
-                  /><TextInput
-                    style={styles.formTextInput}
+                  />
+                  <Input
+                  containerStyle={styles.formInput}
                     placeholder ={"Password"}
                     secureTextEntry = {true}
                     onChangeText={(text)=>{
@@ -146,8 +149,9 @@ export default class SignUpLoginScreen extends Component {
                         password: text
                       })
                     }}
-                  /><TextInput
-                    style={styles.formTextInput}
+                  />
+                  <Input
+                    containerStyle={styles.formInput}
                     placeholder ={"Confrim Password"}
                     secureTextEntry = {true}
                     onChangeText={(text)=>{
@@ -208,7 +212,7 @@ export default class SignUpLoginScreen extends Component {
                     backgroundColor={'#0000cc'}
                     centerComponent={{
                         text: 'BARTER SYSTEM',
-                        style: { color: '#fff', fontSize: 25, fontWeight: "bold"},
+                        style: { color: '#fff', fontSize: RFValue(25), fontWeight: "bold"},
                     }}
                     navigation={this.props.navigation}
                 />
@@ -217,8 +221,8 @@ export default class SignUpLoginScreen extends Component {
                 <Text style={styles.info1}> Barter System!!  </Text>
 
                 <View>
-                   <TextInput
-                        style={styles.loginBox}
+                   <Input
+                        containerStyle={styles.loginBox}
                         placeholder="Username"
                         keyboardType ='email-address'
                         onChangeText={(text)=>{
@@ -228,8 +232,8 @@ export default class SignUpLoginScreen extends Component {
                         }}
                     />
 
-                    <TextInput 
-                        style={styles.loginBox}
+                    <Input 
+                        containerStyle={styles.loginBox}
                         placeholder='Password'
                         secureTextEntry = {true}
                         onChangeText={(text)=>{
@@ -279,7 +283,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 10,
         borderColor : '#000066',
-        fontSize: 20,
+        fontSize: RFValue(20),
         margin:15,
         paddingLeft:10,
         alignSelf: "center",
@@ -288,18 +292,18 @@ const styles = StyleSheet.create({
       },
     buttons: {
         backgroundColor: "#0080ff",
-        marginTop: 20,
-        width: 200,
+        marginTop: RFValue(20),
+        width: (200),
         height: "6%",
         borderWidth: 1.5,
-        marginBottom: 10,
+        marginBottom: RFValue(10),
         borderRadius: 15,
         alignSelf: 'center',
     },
     buttonText: {
-        fontSize: 18,
+        fontSize: RFValue(18),
         textAlign: 'center',
-        marginTop: 7,
+        marginTop: RFValue(7),
         fontWeight: 'bold',
         color: '#FFFFFF',
     },
@@ -307,25 +311,25 @@ const styles = StyleSheet.create({
         color: "darkblue",
         fontWeight: "bold",
         textAlign: 'center',
-        fontSize: 20,
-        marginTop: 20,
+        fontSize: RFValue(20),
+        marginTop: RFValue(20),
     },
     info1: {
         color: "darkblue",
         fontWeight: "bold",
         textAlign: 'center',
-        fontSize: 25,
-        marginTop: 8
+        fontSize: RFValue(25),
+        marginTop: RFValue(8)
     },
-    formTextInput:{
+    formInput:{
         width:"75%",
         height:35,
         alignSelf:'center',
         borderColor:'#ffab91',
         borderRadius:10,
         borderWidth:1,
-        marginTop:20,
-        padding:10
+        marginTop: RFValue(20),
+        padding: RFValue(10)
       },
       modalTitle :{
         justifyContent:'center',
@@ -343,29 +347,29 @@ const styles = StyleSheet.create({
         backgroundColor:"#ffff",
         marginRight:30,
         marginLeft : 30,
-        marginTop:80,
-        marginBottom:80,
+        marginTop: RFValue(80),
+        marginBottom: RFValue(80),
       },
-      formTextInput:{
+      formInput:{
         width:"75%",
         height:"6%",
         alignSelf:'center',
         borderColor:'#000099',
         borderRadius:10,
         borderWidth:2,
-        marginTop:20,
-        padding:10,
+        marginTop: RFValue(20),
+        padding: RFValue(10),
         textAlign: "center",
         fontWeight: "bold"
       },
       registerButton:{
-        width:200,
-        height:40,
+        width: RFValue(200),
+        height: RFValue(40),
         alignItems:'center',
         justifyContent:'center',
         borderWidth:1,
         borderRadius:10,
-        marginTop:30,
+        marginTop: RFValue(30),
         alignSelf: "center"
       },
       registerButtonText:{
@@ -380,7 +384,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         borderWidth:1,
         borderRadius:10,
-        marginTop:30,
+        marginTop: RFValue(30),
         alignSelf: "center"
       },
 })

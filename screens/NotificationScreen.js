@@ -5,6 +5,7 @@ import firebase from 'firebase';
 import MyHeader from '../components/MyHeader';
 import SwipeableFlatList from '../components/SwipeableFlatList';
 import db from '../config';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export default class NotificationScreen extends Component{
   constructor(props) {
@@ -17,8 +18,9 @@ export default class NotificationScreen extends Component{
 
     this.notificationRef = null
   }
-s
+
   getNotifications=()=>{
+    console.log("Getnotifications of Notificationscreen")
     this.requestRef = db.collection("allNotifications")
     .where("notificationStatus", "==", "unread")
     .where("requesterID",'==',this.state.userID)
@@ -33,6 +35,7 @@ s
           allNotifications : allNotifications
       });
     })
+    console.log("All notifications " + this.state.allNotifications)
   }
 
   componentDidMount(){
@@ -62,7 +65,7 @@ s
     return(
       <View style={styles.container}>
         <View style={{flex:0.1}}>
-          <MyHeader title={"NOTIFICATIONS"} />
+          <MyHeader title={"NOTIFICATIONS"} navigation={this.props.navigation} />
         </View>
         <View style={{flex:0.9}}>
           {

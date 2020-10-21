@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, TextInput, 
+import {Text, View, StyleSheet,
 TouchableOpacity,KeyboardAvoidingView, Alert} from 'react-native';
 import db from '../config';
 import MyHeader from '../components/MyHeader';
 import firebase from 'firebase';
+import {Input} from 'react-native-elements';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export default class RequestScreen extends Component {
 
@@ -13,16 +15,100 @@ export default class RequestScreen extends Component {
             userID: firebase.auth().currentUser.email,
             itemName: "",
             reasonToRequest: '',
-            userName: ''
+            userName: '',
+            isRequestStatusActive: false,
+            requestedItemName: "",
+            requestID: "",
+            docID: "",
+            userDocID: "",
+            itemStatus: ""
         }
     }
+
+    
+
+    getisRequestStatusActive=()=>{
+        db.collection("users").where("emailID","==",this.state.userID)
+        .get().then((snapshot)=>{
+            snapshot.forEach((doc)=>{
+                this.setState({
+                    isRequestStatusActive:doc.data().isRequestStatusActive,
+                    userDocId : doc.id
+                  })
+            })
+        })
+    }
+
+    getRequest =()=>{
+      db.collection('requestedItems')
+        .where('userID','==',this.state.userID)
+        .get()
+        .then((snapshot)=>{
+          snapshot.forEach((doc)=>{
+            if(doc.data().itemStatus !== "received"){
+              this.setState({
+                requestID : doc.data().requestID,
+                requestedItemName: doc.data().itemName,
+                itemStatus: doc.data().itemStatus,
+                docID: doc.id
+              })
+            }
+          })
+      })}
+
+      componentDidMount(){
+        this.getRequest()
+        this.getisRequestStatusActive()
+      }
 
     createUniqueId(){
         return Math.random().toString(36).substring(7);
     }
     
-    
-      addRequest =(itemName,reasonToRequest)=>{
+    updateItemisRequestStatusActive=()=>{
+        db.collection('requestedItems').doc(this.state.docID)
+        .update({
+          "itemStatus" : 'received'
+        })
+   
+        db.collection('users').where('emailID','==',this.state.userID).get()
+        .then((snapshot)=>{
+          snapshot.forEach((doc) => {
+            db.collection('users').doc(doc.id).update({
+              "isRequestStatusActive": false
+            })
+          })
+        })
+      }
+
+      sendNotification=()=>{
+        db.collection('users').where('emailID','==',this.state.userID).get()
+        .then((snapshot)=>{
+          snapshot.forEach((doc)=>{
+            var name = doc.data().firstName
+            var lastName = doc.data().lastName
+ 
+            db.collection('allNotifications')
+              .where('requestID','==',this.state.requestID).get()
+            .then((snapshot)=>{
+              snapshot.forEach((doc) => {
+                var donorId  = doc.data().donorID
+                var itemName =  doc.data().itemName
+
+                db.collection('all_notifications').add({
+                  "targetedUserID" : donorId,
+                  "message" : name + " " + lastName + " received the book " + bookName ,
+                  "notificationStatus" : "unread",
+                  "itemName" : itemName
+                })
+              })
+            })
+          })
+        })
+      }
+      
+
+      addRequest =async(itemName,reasonToRequest)=>{
         var userID = this.state.userID;
         var randomrequestID = this.createUniqueId();
 
@@ -39,61 +125,130 @@ export default class RequestScreen extends Component {
             "reasonToRequest":reasonToRequest,
             "requestID"  : randomrequestID,
             "userName": this.state.userName,
+            "itemStatus" : "requested",
+            "date" : firebase.firestore.FieldValue.serverTimestamp()
         })
     
-        this.setState({
-            itemName :'',
-            reasonToRequest : ''
+        await  this.getItemRequest()
+            db.collection('users').where("emailID","==",userID).get()
+            .then()
+            .then((snapshot)=>{
+                snapshot.forEach((doc)=>{
+                    db.collection('users').doc(doc.id).update({
+                        isRequestStatusActive: true
+                })
+                })
+            })
+            this.setState({
+                itemName :'',
+                reasonToRequest : '',
+                requestID: randomRequestId
+            })
+            return Alert.alert("Item Requested Successfully")
+      }
+
+      receivedItems=(itemName)=>{
+        var userId = this.state.userID
+        var requestId = this.state.requestID
+        db.collection('receivedItems').add({
+            "userID": userId,
+            "itemName":itemName,
+            "requestID"  : requestId,
+            "itemStatus"  : "received",
+      
         })
-    
-        return Alert.alert("Your Item has been requested successfully!!")
       }
 
     render(){
-        return (
-            <View style={{flex: 1}}>
-                <MyHeader title="REQUEST  AN  ITEM"  navigation={this.props.navigation}/>
+        if(this.state.isRequestStatusActive !== false){
+            return(        
+                <View style={{flex: 1, backgroundColor: "lightblue"}}>
+                    <MyHeader title="REQUEST  AN  ITEM"  navigation={this.props.navigation}/>
 
-                <KeyboardAvoidingView behavior="margin" enabled style={styles.keyBoardStyle}>
-                    <TextInput style={styles.inputBox}
-                    onChangeText={(text)=>{
-                        this.setState({itemName: text});
-                    }}
-                    value = {this.state.itemName}
-                    placeholder="Enter name of the item here" 
-                    />
+                    <View style={{flex: 1, alignItems: "center"}}>
+                          <View style={styles.box}>
+                              <Text style={styles.heading}>Item Name</Text>
+                              <Text style={styles.text}>{this.state.requestedItemName}</Text>
+                          </View>
 
-                    <TextInput
-                        style ={[styles.inputBox,{height:300, marginBottom: 50}]}
-                        multiline = {true}
-                        placeholder={"Why do you need the item??"}
-                        onChangeText ={(text)=>{
-                            this.setState({
-                                reasonToRequest:text
-                            })
-                        }}
-                        value ={this.state.reasonToRequest}
-                    />
+                          <View style={styles.box}>
+                              <Text style={styles.heading}> Item Value </Text>        
+                              <Text style={styles.text}>{Math.random().toString(2).substring(7)}</Text>
+                        </View>
+                        
+                        <View style={styles.box}>
+                          <Text style={styles.heading}> Item Status </Text>        
+                          <Text style={styles.text}>{this.state.itemStatus}</Text>
+                        </View>
+                    </View>
 
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={()=>{
-                            if(this.state.itemName===""){
-                                Alert.alert("Please enter the name of the item");
-                            }
+                  <TouchableOpacity 
+                  style={styles.receivedButton}
+                  onPress={()=>{
+                    this.sendNotification()
+                    this.updateItemisRequestStatusActive();
+                    this.receivedItems(this.state.requestedItemName)
+                  }}>
+                  <Text style={{fontWeight: "bold", color: "white", fontSize: RFValue(20), marginTop: 10}}>
+                    I received the item!!! jut 
+                  </Text>
+                  </TouchableOpacity>
+                </View>
+              )
+        }
+        
+        else {
+            return (
+                <View style={{flex: 0.8}}>
+                    <MyHeader title="REQUEST  AN  ITEM"  navigation={this.props.navigation}/>
                     
-                            else if(this.state.reasonToRequest==""){
-                                Alert.alert("Please enter the reason to request");
-                            }
-                            else {
-                                this.addRequest(this.state.itemName,this.state.reasonToRequest);
-                            }
-                        }}>
-                        <Text style={{fontWeight: "bold", color: "white", fontSize: 18}}>REQUEST  </Text>
-                    </TouchableOpacity>
-                </KeyboardAvoidingView>
-            </View>
-        )
+                    <KeyboardAvoidingView behavior="margin" enabled style={styles.keyBoardStyle}>
+                        <Input containerStyle={styles.inputBox}
+                        onChangeText={(text)=>{
+                            this.setState({itemName: text});
+                        }}
+                        value = {this.state.itemName}
+                        placeholder="Enter name of the item here" 
+                        />
+    
+                        <Input
+                            containerStyle =
+                            {[styles.inputBox,{height:300, marginBottom: 10, marginTop: 50}]}
+                            multiline = {true}
+                            placeholder={"Why do you need the item??"}
+                            onChangeText ={(text)=>{
+                                this.setState({
+                                    reasonToRequest:text
+                                })
+                            }}
+                            value ={this.state.reasonToRequest}
+                        />
+    
+                        <TouchableOpacity 
+                            style={styles.button}
+                            onPress={()=>{
+                                if(this.state.itemName===""){
+                                    Alert.alert("Please enter the name of the item");
+                                }
+                        
+                                else if(this.state.reasonToRequest==""){
+                                    Alert.alert("Please enter the reason to request");
+                                }
+                                else {
+                                    this.addRequest(this.state.itemName,this.state.reasonToRequest);
+                                    this.setState({
+                                      itemName :'',
+                                      reasonToRequest : '',
+                                  })
+                                  return Alert.alert("Item Requested Successfully")
+                                }
+                            }}>
+                            <Text style={{fontWeight: "bold", color: "white", fontSize: RFValue(18),}}>REQUEST  </Text>
+                        </TouchableOpacity>
+                    </KeyboardAvoidingView>
+                </View>
+            )
+        }
     }
 }
 
@@ -110,22 +265,49 @@ const styles = StyleSheet.create({
         borderColor:'grey',
         borderRadius:10,
         borderWidth: 3,
-        marginTop:20,
+        marginTop: RFValue(100),
         textAlign: "center",
         backgroundColor: "white",
         color: "blue",
         fontWeight: "bold",
-        fontSize: 19,
-        marginBottom: 20,
+        fontSize: RFValue(19),
+        marginBottom: RFValue(1),
       },
       button:{
         width:"75%",
         height:50,
         justifyContent:'center',
         alignItems:'center',
-        marginBottom: 200,
+        marginBottom: RFValue(200),
         borderRadius: 15,
         backgroundColor:"darkblue",
-        marginTop:20
+        marginTop:RFValue(20)
         },
+    receivedButton: {
+        backgroundColor:"blue",
+        width:"60%",
+        alignSelf:'center',
+        alignItems:'center',
+        height:"8%",
+        borderRadius: 13,
+        marginBottom: 70,
+    },
+    heading: {
+      textDecorationLine: "underline",
+      fontWeight: "bold",
+      fontSize: RFValue(20),
+      textAlign: "center"
+    },
+    text: {
+      fontSize: RFValue(20),
+      textAlign: "center",
+      marginTop: RFValue(10)
+    },
+    box: {
+      // flex: 0.2, 
+      borderColor: "blue", 
+      borderWidth: 3, 
+      marginTop: RFValue(50),
+      width: "70%"
+    }
 })

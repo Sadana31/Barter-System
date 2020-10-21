@@ -3,7 +3,7 @@ import { Header,Icon,Badge } from 'react-native-elements';
 import { View} from 'react-native';
 import db from '../config';
 import firebase from 'firebase';
-//import * from 'react-navigation';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export default class MyHeader extends Component {
   constructor(props){
@@ -20,7 +20,7 @@ export default class MyHeader extends Component {
     .where("requesterID","==",this.state.userID)
     .onSnapshot((snapshot)=>{
       var unreadNotifications = snapshot.docs.map((doc)=>doc.data())
-      this.setState({value: unreadNotifications.length});
+      this.setState({number: unreadNotifications.length});
     })
   }
 
@@ -34,7 +34,7 @@ export default class MyHeader extends Component {
         <Icon name="bell" type="font-awesome" color="white" size={25}
          onPress={()=>{this.props.navigation.navigate("Notifications")}}
         />
-         <Badge value={this.state.number}
+         <Badge number={this.state.number}
          containerStyle={{position: "absolute", top:-5, right:-5, color:"lightblue"}}/>
       </View>
     )
@@ -48,7 +48,9 @@ export default class MyHeader extends Component {
                             this.props.navigation.toggleDrawer()
                         }
                         />}
-        centerComponent={{ text: this.props.title, style: { color: 'white', fontSize:20,fontWeight:"bold", } }}
+        centerComponent={{ text: this.props.title, 
+                           style: { color: 'white', fontSize:RFValue(20),fontWeight:"bold"} 
+                        }}
         rightComponent={<this.bellIcon {...this.props} />}
         backgroundColor = "darkblue"
         navigation={this.props.navigation}

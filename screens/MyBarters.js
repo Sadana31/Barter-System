@@ -3,7 +3,7 @@ import {
   View,
   Text,
   KeyboardAvoidingView,
-  TextInput,
+  Input,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -13,6 +13,7 @@ import {Card,Listitem,Icon} from 'react-native-elements';
 import MyHeader from '../components/MyHeader';
 import db from '../config';
 import firebase from 'firebase';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export default class MyBarters extends Component {
   constructor(){
@@ -29,7 +30,7 @@ export default class MyBarters extends Component {
 
   getDonorDetails=(donorId)=>{
     db.collection("users").where("emailID","==", donorId).get()
-    .onSnapshot((snapshot)=>{
+    .then((snapshot)=>{
       snapshot.forEach((doc) => {
         this.setState({
           "donorName" : doc.data().firstName + " " + doc.data().lastName
@@ -39,7 +40,7 @@ export default class MyBarters extends Component {
   }
 
   getAllDonations =()=>{
-    this.requestRef = db.collection("allNotifications").where("donorID" ,'==', this.state.donorId)
+    this.requestRef = db.collection("allBarters").where("donorID" ,'==', this.state.donorId)
     .onSnapshot((snapshot)=>{
       var allDonations = []
       snapshot.docs.map((doc) =>{
@@ -54,23 +55,23 @@ export default class MyBarters extends Component {
   }
 
   senditem=(itemDetails)=>{
-    if(itemDetails.requestStatus === "item Sent"){
-      var requestStatus = "Donor Interested"
+    if(itemDetails.isRequestStatusActive === "item Sent"){
+      var isRequestStatusActive = "Donor Interested"
       db.collection("allBarters").doc(itemDetails.docID).update({
-        "requestStatus" : "Donor Interested"
+        "isRequestStatusActive" : "Donor Interested"
       })
-      this.sendNotification(itemDetails,requestStatus)
+      this.sendNotification(itemDetails,isRequestStatusActive)
     }
     else{
-      var requestStatus = "item Sent"
+      var isRequestStatusActive = "item Sent"
       db.collection("allBarters").doc(itemDetails.docID).update({
-        "requestStatus" : "item Sent"
+        "isRequestStatusActive" : "item Sent"
       })
-      this.sendNotification(itemDetails,requestStatus)
+      this.sendNotification(itemDetails,isRequestStatusActive)
     }
   }
 
-  sendNotification=(itemDetails,requestStatus)=>{
+  sendNotification=(itemDetails,isRequestStatusActive)=>{
     var requestId = itemDetails.requestID
     var donorId = itemDetails.donorID
     db.collection("allNotifications")
@@ -80,7 +81,7 @@ export default class MyBarters extends Component {
     .then((snapshot)=>{
       snapshot.forEach((doc) => {
         var message = ""
-        if(requestStatus === "item Sent"){
+        if(isRequestStatusActive === "item Sent"){
           message = this.state.donorName + " sent you item"
         }else{
            message =  this.state.donorName  + " has shown interest in donating the item"
@@ -143,7 +144,7 @@ export default class MyBarters extends Component {
                 this.state.allDonations.length === 0
                 ?(
                   <View style={styles.subtitle}>
-                    <Text style={{ fontSize: 20}}>List of all Barters</Text>
+                    <Text style={{ fontSize: RFValue(20),}}>List of all Barters</Text>
                   </View>
                 )
                 :(
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     },
     subtitle :{
       flex:1,
-      fontSize: 20,
+      fontSize: RFValue(20),
       justifyContent:'center',
       alignItems:'center'
     }

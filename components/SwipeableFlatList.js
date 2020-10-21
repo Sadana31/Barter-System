@@ -13,6 +13,8 @@ export default class SwipeableFlatList extends React.Component {
     }
 
     onSwipeValueChange=swipeData=>{
+        console.log("Inside onSwipeValueChange")
+        console.log("SwipeDate " + swipeData)
         var allNotifications = this.state.allNotifications;
         const {key,value} = swipeData;
         if(value < -Dimensions.get("window").width){
@@ -29,6 +31,8 @@ export default class SwipeableFlatList extends React.Component {
             "notificationStatus": "read"
         })
     }
+
+    //keyExtractor=({item,index})=>index.toString();
 
     renderItem=item=>(
         <Animated.View>
@@ -53,7 +57,7 @@ export default class SwipeableFlatList extends React.Component {
         return(
             <View style={styles.container}>
                 <SwipeListView 
-                disableRightSwipe
+                //disableRightSwipe
                 data={this.state.allNotifications}
                 renderItem={this.renderItem}
                 renderHiddenItem={this.renderHiddenItem}
@@ -63,13 +67,14 @@ export default class SwipeableFlatList extends React.Component {
                 previewOpenDelay={3000}
                 onSwipeValueChange={this.onSwipeValueChange}/>
             </View>
+           
         )
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
+        backgroundColor: 'lightblue',
         flex: 1,
     },
     backTextWhite: {

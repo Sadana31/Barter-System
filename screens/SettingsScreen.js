@@ -2,14 +2,15 @@ import React,{Component} from 'react';
 import {
   View,
   Text,
-  TextInput,
   KeyboardAvoidingView,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   Alert} from 'react-native';
 import db from '../config';
 import firebase from 'firebase';
 import MyHeader from '../components/MyHeader'
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export default class SettingsScreen extends Component {
     constructor(){
@@ -99,8 +100,8 @@ export default class SettingsScreen extends Component {
               </Text>
               <TextInput
                 style={styles.inputBox}
-                placeholder ={"Contact"}
                 maxLength ={10}
+                placeholder="Contact"
                 keyboardType={'numeric'}
                 onChangeText={(text)=>{
                   this.setState({
@@ -116,6 +117,7 @@ export default class SettingsScreen extends Component {
               <TextInput
                 style={styles.inputBox}
                 placeholder ={"Address"}
+                label={"Address"}
                 multiline = {true}
                 onChangeText={(text)=>{
                   this.setState({
@@ -124,22 +126,6 @@ export default class SettingsScreen extends Component {
                 }}
                   value ={this.state.address}
               />
-
-                <Text style={styles.header}>
-                  E-MAIL ENTER
-              </Text>
-              <TextInput
-                style={styles.inputBox}
-                placeholder ={"Address"}
-                multiline = {true}
-                onChangeText={(text)=>{
-                  this.setState({
-                    address: text
-                  })
-                }}
-                  value ={this.state.emailID}
-              />
-
               <TouchableOpacity style={styles.button}
                 onPress={()=>{
                   this.updateData();
@@ -172,29 +158,29 @@ export default class SettingsScreen extends Component {
       borderColor:'grey',
       borderRadius:10,
       borderWidth:2,
-      marginTop:5,
+      marginTop: RFValue(5),
       textAlign: "center",
       fontWeight: "bold"
     },
     button:{
       width:"55%",
-      height:50,
+      height: RFValue(50),
       borderRadius:10,
       backgroundColor:"darkblue",
-      marginTop:30
+      marginTop: RFValue(30)
     },
     buttonText:{
       fontSize:18,
       fontWeight:"bold",
       color:"#fff",
       textAlign: "center",
-      marginTop:10
+      marginTop: RFValue(10)
     },
     header: {
         fontWeight:"bold",
-        fontSize: 17,
+        fontSize: RFValue(17),
         textAlign: "center",
-        marginTop: 30,
+        marginTop: RFValue(30),
         color: "navy"
     },
   })

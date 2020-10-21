@@ -4,6 +4,7 @@ import { ListItem } from 'react-native-elements'
 import firebase from 'firebase';
 import db from '../config'
 import MyHeader from '../components/MyHeader';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export default class DonateScreen extends Component{
   constructor(){
@@ -40,8 +41,8 @@ export default class DonateScreen extends Component{
         key={i}
         title={item.itemName}
         subtitle={item.reasonToRequest}
-        titleStyle={{ color: 'black', fontWeight: 'bold', fontSize: 20 }}
-        subtitleStyle={{ color: 'black', fontSize: 15 }}
+        titleStyle={{ color: 'black', fontWeight: 'bold', fontSize: RFValue(20), }}
+        subtitleStyle={{ color: 'black', fontSize: RFValue(15), }}
         rightElement={
             <TouchableOpacity style={styles.button}
             onPress={()=>{
@@ -64,7 +65,7 @@ export default class DonateScreen extends Component{
             this.state.requestedItemsList.length === 0
             ?(
               <View style={styles.subContainer}>
-                <Text style={{ fontSize: 20}}>There are currently no requests!!</Text>
+                <Text style={{ fontSize: RFValue(20),}}>There are currently no requests!!</Text>
               </View>
             )
             :(
@@ -84,7 +85,7 @@ export default class DonateScreen extends Component{
 const styles = StyleSheet.create({
   subContainer:{
     flex:1,
-    fontSize: 20,
+    fontSize: RFValue(20),
     justifyContent:'center',
     alignItems:'center',
     backgroundColor: "lightblue"
